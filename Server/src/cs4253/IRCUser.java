@@ -7,21 +7,38 @@ import java.net.Socket;
 public class IRCUser {
     private final String username;
     private PrintWriter out;
+    private Socket s;
 
-    public IRCUser(Socket s, String username){
+    public IRCUser(Socket s, String username) throws IOException{
         this.username = new String(username);
-        try {
-            out = new PrintWriter(s.getOutputStream());
-        } catch(IOException e){
-            System.out.println("Error: " + e);
-        }
+        this.s = s;
+        out = new PrintWriter(s.getOutputStream(), true);
     }
 
     public synchronized void sendMessage(String message){
         out.println(message);
+        System.out.println("@" + username + ": " + message);
     }
 
     public String getUsername(){
         return username;
+    }
+    
+    public Socket getSocket(){
+    	return s;
+    }
+    
+    public void close(){
+    	out.close();
+    	try {
+    		s.close();
+    	} catch(IOException e){
+    		System.err.println("Error: " + e);
+    		System.exit(-1);
+    	}
+    }
+    
+    public boolean equals(IRCUser u){
+    	return (username == u.getUsername());
     }
 }

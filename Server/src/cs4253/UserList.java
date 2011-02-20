@@ -9,7 +9,31 @@ public class UserList {
         users = new ArrayList<IRCUser>();
     }
 
-    public void add(IRCUser u){
+    public synchronized void add(IRCUser u){
         users.add(u);
+    }
+    
+    public synchronized void remove(IRCUser u){
+    	users.remove(u);
+    }
+    
+    public void sendMessage(String message, String username){
+    	for(IRCUser u : users){
+    		if(u.getUsername().equalsIgnoreCase(username)){
+    			u.sendMessage(message);
+    			break;
+    		}
+    	}
+    }
+    
+    public void sendMessageToAll(String message){
+    	for(IRCUser u : users)
+    		u.sendMessage(message);
+    }
+    
+    public void sendMessageToAllExcept(String message, String username){
+    	for(IRCUser u : users)
+    		if(!u.getUsername().equalsIgnoreCase(username))
+    			u.sendMessage(message);
     }
 }
