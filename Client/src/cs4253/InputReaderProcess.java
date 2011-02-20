@@ -23,12 +23,12 @@ public class InputReaderProcess implements Runnable{
 			System.out.print("Please enter a username: ");
 			username = stdIn.readLine();
 			out.println(username);
-			System.out.print(username + ": ");
+			//System.out.print(username + ": ");
 			
 			while ((userInput = stdIn.readLine()) != null) {
 				out.println(userInput);
 				Thread.sleep(50);
-				System.out.print(username + ": ");
+				//System.out.print(username + ": ");
 			}
 		} catch(IOException e){
 			System.err.println("Error: " + e);

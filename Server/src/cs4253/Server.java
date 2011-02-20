@@ -19,7 +19,7 @@ public class Server {
             System.exit(-1);
         }
 
-        Socket client;
+        //Socket client;
         Thread clientThread;
 
         while (true){

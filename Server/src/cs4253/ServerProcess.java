@@ -3,7 +3,6 @@ package cs4253;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.Socket;
 
 public class ServerProcess implements Runnable {
@@ -58,6 +57,7 @@ public class ServerProcess implements Runnable {
         } catch(IOException e){
             // PROBABLY INCORRECT! how to make a thread kill itself?
             System.out.println("Error: " + e);
+            users.remove(user);
             return;
         }
     }

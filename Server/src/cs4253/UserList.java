@@ -1,39 +1,38 @@
 package cs4253;
 
-import java.util.ArrayList;
+import java.util.TreeMap;
 
 public class UserList {
-    private ArrayList<IRCUser> users;
+    private TreeMap<String, IRCUser> users;
 
     public UserList(){
-        users = new ArrayList<IRCUser>();
+        users = new TreeMap<String, IRCUser>();
     }
 
     public synchronized void add(IRCUser u){
-        users.add(u);
+        users.put(u.getUsername(),u);
     }
     
     public synchronized void remove(IRCUser u){
+    	users.remove(u.getUsername());
+    }
+    
+    public synchronized void remove(String u){
     	users.remove(u);
     }
     
     public void sendMessage(String message, String username){
-    	for(IRCUser u : users){
-    		if(u.getUsername().equalsIgnoreCase(username)){
-    			u.sendMessage(message);
-    			break;
-    		}
-    	}
+    	users.get(username).sendMessage(message);
     }
     
     public void sendMessageToAll(String message){
-    	for(IRCUser u : users)
-    		u.sendMessage(message);
+    	for(String u : users.keySet())
+    		users.get(u).sendMessage(message);
     }
     
     public void sendMessageToAllExcept(String message, String username){
-    	for(IRCUser u : users)
-    		if(!u.getUsername().equalsIgnoreCase(username))
-    			u.sendMessage(message);
+    	for(String u : users.keySet())
+    		if(!users.get(u).getUsername().equalsIgnoreCase(username))
+    			users.get(u).sendMessage(message);
     }
 }

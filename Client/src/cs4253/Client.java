@@ -3,7 +3,6 @@ package cs4253;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
@@ -11,16 +10,24 @@ public class Client {
 	public static final int PORT = 20999;
 
 	public static void main(String[] args) {
-		if (args.length == 0) {
-			System.out.println("Client usage:");
-			System.out.println("   java Client <hostname>");
-			System.exit(1);
-		}
 
 		Socket server = null;
-		String host = args[0];
+		String host;
 		BufferedReader in = null;
-
+		
+		if (args.length == 0) {
+			try{
+				System.out.print("Hostname: ");
+				host = new BufferedReader(new InputStreamReader(System.in)).readLine();
+			}catch(Exception e){
+				host = "localhost"; // otherwise java throws a fit
+				System.err.println("Error: " + e);
+				System.exit(1);
+			}
+		}else{
+			host = args[0];
+		}
+		
 		try {
 			server = new Socket(host, PORT);
 			in = new BufferedReader(new InputStreamReader(server.getInputStream()));
@@ -37,7 +44,7 @@ public class Client {
 			(new Thread(new InputReaderProcess(server))).start();
 
 			while ((serverResponse = in.readLine()) != null){
-				System.out.println("\n" + serverResponse);
+				System.out.println(serverResponse);
 				if(serverResponse.equalsIgnoreCase("/disconnect"))
 					break;
 			}
