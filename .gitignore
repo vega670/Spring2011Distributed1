@@ -1,0 +1,9 @@
+*.class
+nbproject/
+test/
+*.mf
+*.xml
+.metadata/
+bin/
+.classpath
+.project
