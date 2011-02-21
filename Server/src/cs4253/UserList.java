@@ -21,7 +21,7 @@ public class UserList {
     	users.remove(u);
     }
     
-    public void sendMessage(String message, String username){
+    public void sendMessage(String message, String username) throws NullPointerException{
     	users.get(username).sendMessage(message);
     }
     

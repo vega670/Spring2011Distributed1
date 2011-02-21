@@ -38,7 +38,12 @@ public class ServerProcess implements Runnable {
                 switch(action){
                     case '@':	// if @user, find appropriate IRCUser
                     	command = inputSplit[0].substring(1, inputSplit[0].length()-1);
-                    	users.sendMessage(message, command);
+                    	try{
+                    		users.sendMessage(message, command);
+                    	}catch(NullPointerException e){
+                    		users.sendMessage("Username " + command + " not found!", user.getUsername());
+                    	}
+                    	message = "";
                         break;
                     case '/':	// if /command, execute command
                     	command = inputSplit[0].substring(1, inputSplit[0].length());
