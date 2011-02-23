@@ -17,7 +17,6 @@ public class IRCUser {
 
     public synchronized void sendMessage(String message){
         out.println(message);
-        System.out.println("@" + username + ": " + message);
     }
 
     public String getUsername(){

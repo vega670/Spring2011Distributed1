@@ -35,4 +35,15 @@ public class UserList {
     		if(!users.get(u).getUsername().equalsIgnoreCase(username))
     			users.get(u).sendMessage(message);
     }
+    
+    public boolean usernameExists(String username){
+    	boolean exists = false;
+    	for(String u : users.keySet()){
+    		if(users.get(u).getUsername().equalsIgnoreCase(username)){
+    			exists = true;
+    			break;
+    		}
+    	}
+    	return exists;
+    }
 }
