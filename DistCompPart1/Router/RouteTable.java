@@ -1,10 +1,16 @@
 package Router;
 
+import java.util.Comparator;
 import java.util.Set;
 import java.util.TreeMap;
 
 public class RouteTable {
-	
+
+        final Comparator<Integer> COMPARE_INTS = new Comparator<Integer>(){
+            public int compare(Integer one, Integer two){
+                return one.compareTo(two);
+            }
+        };
 	TreeMap<Integer, ServerLink> table;
 
 	public RouteTable() {
@@ -13,25 +19,15 @@ public class RouteTable {
 	}
 	
 	public void addServerLink(int port, ServerLink link){
-		table.put(new Integer(port), link);
+		table.put(port, link);
 	}
 	
 	public void removeServerLink(int port){
-		for(Integer i : table.keySet()){
-			if(i.equals(port)){
-				table.remove(i);
-			}
-		}
+		table.remove(port);
 	}
 	
 	public ServerLink getServerLink(int port){
-		for(Integer i : table.keySet()){
-			if(i.equals(port)){
-				return table.get(i);
-			}
-		}
-		
-		return null;
+		return table.get(port);
 	}
 	
 	public Set<Integer> getPorts(){

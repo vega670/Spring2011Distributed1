@@ -8,7 +8,6 @@ public class ServerLink {
 	private InetAddress ip;
 	
 	public ServerLink(int port, InetAddress ip) {
-		super();
 		this.port = port;
 		this.ip = ip;
 	}

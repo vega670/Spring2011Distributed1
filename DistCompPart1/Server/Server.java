@@ -1,19 +1,22 @@
 package Server;
 import java.net.*;
 import java.io.*;
+import java.util.concurrent.Semaphore;
 
 public class Server{
 	
 	int port;
 	boolean running;
 	PrintWriter printOut;
+        private final Semaphore threadResource;
 	
 	public Server(int port) {
 		super();
 		this.port = port;
-		running = false;
+		this.running = false;
+                threadResource = new Semaphore(100, true);
 	}
-	
+
 	public void run(){
 		
 		ServerSocket serverSock = null;
@@ -23,7 +26,8 @@ public class Server{
 			serverSock = new ServerSocket(port);
 			
 			while(running){
-				new Thread( new ServerThread( serverSock.accept() ) ).start();
+                            threadResource.acquire();
+                            new Thread( new ServerThread( serverSock.accept(), threadResource ) ).start();
 			}
 			
 			serverSock.close();
@@ -39,10 +43,12 @@ public class Server{
 	private class ServerThread implements Runnable{
 		
 		Socket sock;
+                Semaphore threadResource;
 		
-		public ServerThread(Socket sock) {
+		public ServerThread(Socket sock, Semaphore threadResource) {
 			super();
 			this.sock = sock;
+                        this.threadResource = threadResource;
 		}
 
 		public void run(){
@@ -59,6 +65,7 @@ public class Server{
 			}catch(Exception e){
 				System.err.println("Error: " + e);
 			}
+                        threadResource.release();
 		}
 		
 	}

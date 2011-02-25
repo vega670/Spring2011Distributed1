@@ -5,20 +5,22 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.Semaphore;
 
 public class RouterPort implements Runnable{
 	
 	private int port;
 	private RouteTable table;
 	private boolean running;
-	
+	private final Semaphore threadResource;
 	private static final int timeout = 10000;
 	
 	public RouterPort(int port, RouteTable table) {
 		super();
 		this.port = port;
 		this.table = table;
-		running = false;
+		this.running = false;
+                this.threadResource = new Semaphore(100, true);
 	}
 	
 	public void run(){
@@ -30,7 +32,8 @@ public class RouterPort implements Runnable{
 			serverSock = new ServerSocket(port);
 			
 			while(running){
-				new Thread( new RouterThread( serverSock.accept() ) ).start();
+                            threadResource.acquire();
+                            new Thread( new RouterThread( serverSock.accept(), threadResource ) ).start();
 			}
 			
 			serverSock.close();
@@ -46,10 +49,12 @@ public class RouterPort implements Runnable{
 	private class RouterThread implements Runnable{
 		
 		Socket sockClient;
+                Semaphore threadResource;
 		
-		public RouterThread(Socket sock) {
+		public RouterThread(Socket sock, Semaphore threadResource) {
 			super();
 			this.sockClient = sock;
+                        this.threadResource = threadResource;
 		}
 
 		public void run(){
@@ -83,6 +88,7 @@ public class RouterPort implements Runnable{
 			}catch(Exception e){
 				System.out.println("Error: " + e);
 			}
+                        threadResource.release();
 		}
 		
 	}
