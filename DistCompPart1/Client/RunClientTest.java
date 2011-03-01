@@ -5,9 +5,11 @@ import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
 
+import Server.Server;
+
 public class RunClientTest {
 	
-public static void main(String[] args){
+	public static void main(String[] args){
 		
 		int port = 17654;
 		
@@ -23,6 +25,7 @@ public static void main(String[] args){
 				ip = InetAddress.getByName(args[0]);
 			}
 			
+			new Thread( new Server(17655)).start(); 
 			Client client = new Client(ip, port);
 			BufferedReader in = new BufferedReader( new FileReader("loremIpsum.txt") );
 			while(in.ready()){

@@ -5,22 +5,24 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.concurrent.Semaphore;
 
 public class RouterPort implements Runnable{
 	
 	private int port;
-	private RouteTable table;
+	private ServerTable table;
 	private boolean running;
 	private final Semaphore threadResource;
 	private static final int timeout = 10000;
 	
-	public RouterPort(int port, RouteTable table) {
+	public RouterPort(int port, ServerTable table) {
 		super();
 		this.port = port;
 		this.table = table;
+		
 		this.running = false;
-                this.threadResource = new Semaphore(100, true);
+        this.threadResource = new Semaphore(100, true);
 	}
 	
 	public void run(){
@@ -32,8 +34,8 @@ public class RouterPort implements Runnable{
 			serverSock = new ServerSocket(port);
 			
 			while(running){
-                            threadResource.acquire();
-                            new Thread( new RouterThread( serverSock.accept(), threadResource ) ).start();
+                threadResource.acquire();
+                new Thread( new RouterThread( serverSock.accept(), threadResource ) ).start();
 			}
 			
 			serverSock.close();
@@ -49,23 +51,27 @@ public class RouterPort implements Runnable{
 	private class RouterThread implements Runnable{
 		
 		Socket sockClient;
-                Semaphore threadResource;
+        Semaphore threadResource;
 		
 		public RouterThread(Socket sock, Semaphore threadResource) {
 			super();
 			this.sockClient = sock;
-                        this.threadResource = threadResource;
+            this.threadResource = threadResource;
 		}
 
 		public void run(){
-			try{	
+			try{
 				//read from client
 				BufferedReader inClient = new BufferedReader(new InputStreamReader(sockClient.getInputStream()));
 				String message = inClient.readLine();
 				
+				if( !table.checkForAddress( sockClient.getInetAddress() ) ){
+					table.addServerLink( new ServerLink(17655 , sockClient.getInetAddress()) );
+				}
+					
 				//search route table
-				ServerLink sLink = table.getServerLink(port);
-				Socket sockServer = new Socket(sLink.getIp(), sLink.getPort());
+				ServerLink link = table.getServerLink();
+				Socket sockServer = new Socket(link.getIp(), link.getPort());
 				
 				//write to server
 				PrintWriter outServer = new PrintWriter(sockServer.getOutputStream());
@@ -73,17 +79,23 @@ public class RouterPort implements Runnable{
 				outServer.flush();
 				
 				//read from server
-				sockServer.setSoTimeout(timeout);
-				BufferedReader inServer = new BufferedReader(new InputStreamReader(sockServer.getInputStream()));
-				message = inServer.readLine();
+				try{
+					sockServer.setSoTimeout(timeout);
+					BufferedReader inServer = new BufferedReader(new InputStreamReader(sockServer.getInputStream()));
+					message = inServer.readLine();
+				}catch(SocketTimeoutException e){
+					table.removeServerLink(link.getIp());
+				}
+				
+				//close server socket
+				sockServer.close();
 				
 				//write to client
 				PrintWriter outClient = new PrintWriter(sockClient.getOutputStream());
 				outClient.println(message);
 				outClient.flush();
 				
-				//close sockets
-				sockServer.close();
+				//close client socket
 				sockClient.close();
 			}catch(Exception e){
 				System.out.println("Error: " + e);

@@ -3,18 +3,18 @@ import java.net.*;
 import java.io.*;
 import java.util.concurrent.Semaphore;
 
-public class Server{
+public class Server implements Runnable{
 	
 	int port;
 	boolean running;
 	PrintWriter printOut;
-        private final Semaphore threadResource;
+    private final Semaphore threadResource;
 	
 	public Server(int port) {
 		super();
 		this.port = port;
 		this.running = false;
-                threadResource = new Semaphore(100, true);
+        threadResource = new Semaphore(100, true);
 	}
 
 	public void run(){
@@ -26,8 +26,8 @@ public class Server{
 			serverSock = new ServerSocket(port);
 			
 			while(running){
-                            threadResource.acquire();
-                            new Thread( new ServerThread( serverSock.accept(), threadResource ) ).start();
+                threadResource.acquire();
+                new Thread( new ServerThread( serverSock.accept(), threadResource ) ).start();
 			}
 			
 			serverSock.close();
@@ -43,12 +43,12 @@ public class Server{
 	private class ServerThread implements Runnable{
 		
 		Socket sock;
-                Semaphore threadResource;
+        Semaphore threadResource;
 		
 		public ServerThread(Socket sock, Semaphore threadResource) {
 			super();
 			this.sock = sock;
-                        this.threadResource = threadResource;
+            this.threadResource = threadResource;
 		}
 
 		public void run(){
@@ -65,7 +65,7 @@ public class Server{
 			}catch(Exception e){
 				System.err.println("Error: " + e);
 			}
-                        threadResource.release();
+            threadResource.release();
 		}
 		
 	}

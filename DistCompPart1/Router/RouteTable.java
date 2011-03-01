@@ -1,32 +1,33 @@
 package Router;
 
-import java.util.Comparator;
+//import java.util.Comparator;
 import java.util.Set;
 import java.util.TreeMap;
 
 public class RouteTable {
 
-        final Comparator<Integer> COMPARE_INTS = new Comparator<Integer>(){
-            public int compare(Integer one, Integer two){
-                return one.compareTo(two);
-            }
-        };
-	TreeMap<Integer, ServerLink> table;
+//    final Comparator<Integer> COMPARE_INTS = new Comparator<Integer>(){
+//        public int compare(Integer one, Integer two){
+//            return one.compareTo(two);
+//        }
+//    };
+    
+	TreeMap<Integer, ServerTable> table;
 
 	public RouteTable() {
 		super();
-		this.table = new TreeMap<Integer, ServerLink>();
+		this.table = new TreeMap<Integer, ServerTable>();
 	}
 	
-	public void addServerLink(int port, ServerLink link){
-		table.put(port, link);
+	public void addServerTable(int port){
+		table.put(port, new ServerTable());
 	}
 	
-	public void removeServerLink(int port){
+	public void removeServerTable(int port){
 		table.remove(port);
 	}
 	
-	public ServerLink getServerLink(int port){
+	public ServerTable getServerTable(int port){
 		return table.get(port);
 	}
 	

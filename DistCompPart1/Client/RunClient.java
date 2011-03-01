@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
 
+import Server.Server;
+
 public class RunClient {
 
 	public static void main(String[] args){
@@ -22,6 +24,7 @@ public class RunClient {
 				ip = InetAddress.getByName(args[0]);
 			}
 			
+			new Thread( new Server(17655)).start(); 
 			Client client = new Client(ip, port);
 			while(true){
 				System.out.println( client.send( in.readLine() ) );
