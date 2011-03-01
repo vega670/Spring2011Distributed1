@@ -1,2 +1,2 @@
-java -cp "cs4253.jar" Client.RunClient localhost
+java -cp "cs4253.jar" Client.RunClient
 pause

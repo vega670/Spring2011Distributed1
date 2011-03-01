@@ -5,7 +5,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketTimeoutException;
 import java.util.concurrent.Semaphore;
 
 public class RouterPort implements Runnable{
@@ -60,6 +59,7 @@ public class RouterPort implements Runnable{
 		}
 
 		public void run(){
+			
 			try{
 				//read from client
 				BufferedReader inClient = new BufferedReader(new InputStreamReader(sockClient.getInputStream()));
@@ -71,7 +71,15 @@ public class RouterPort implements Runnable{
 					
 				//search route table
 				ServerLink link = table.getServerLink();
-				Socket sockServer = new Socket(link.getIp(), link.getPort());
+				Socket sockServer;
+				while(true){
+					try{
+						sockServer = new Socket(link.getIp(), link.getPort());
+						break;
+					}catch(Exception e){
+						table.removeServerLink(link.getIp());
+					}
+				}
 				
 				//write to server
 				PrintWriter outServer = new PrintWriter(sockServer.getOutputStream());
@@ -79,13 +87,9 @@ public class RouterPort implements Runnable{
 				outServer.flush();
 				
 				//read from server
-				try{
-					sockServer.setSoTimeout(timeout);
-					BufferedReader inServer = new BufferedReader(new InputStreamReader(sockServer.getInputStream()));
-					message = inServer.readLine();
-				}catch(SocketTimeoutException e){
-					table.removeServerLink(link.getIp());
-				}
+				sockServer.setSoTimeout(timeout);
+				BufferedReader inServer = new BufferedReader(new InputStreamReader(sockServer.getInputStream()));
+				message = inServer.readLine();
 				
 				//close server socket
 				sockServer.close();
