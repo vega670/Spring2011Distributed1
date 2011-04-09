@@ -1,3 +1,6 @@
+//DistComp - Project
+//Alex Sieland
+//Matthew Dale
 package Client;
 
 import java.io.BufferedReader;
@@ -5,7 +8,7 @@ import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
 
-import Server.Server;
+import Server.RunServer;
 
 public class RunClientTest {
 	
@@ -25,7 +28,7 @@ public class RunClientTest {
 				ip = InetAddress.getByName(args[0]);
 			}
 			
-			new Thread( new Server(17655)).start(); 
+			RunServer.runServer(); 
 			Client client = new Client(ip, port);
 			BufferedReader in = new BufferedReader( new FileReader("loremIpsum.txt") );
 			while(in.ready()){

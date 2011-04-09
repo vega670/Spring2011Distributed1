@@ -1,3 +1,6 @@
+//DistComp - Project
+//Alex Sieland
+//Matthew Dale
 package Router;
 
 import java.io.BufferedReader;
@@ -90,6 +93,7 @@ public class RouterPort implements Runnable{
 				sockServer.setSoTimeout(timeout);
 				BufferedReader inServer = new BufferedReader(new InputStreamReader(sockServer.getInputStream()));
 				message = inServer.readLine();
+				String portMessage = inServer.readLine();
 				
 				//close server socket
 				sockServer.close();
@@ -97,6 +101,7 @@ public class RouterPort implements Runnable{
 				//write to client
 				PrintWriter outClient = new PrintWriter(sockClient.getOutputStream());
 				outClient.println(message);
+				outClient.println(portMessage);
 				outClient.flush();
 				
 				//close client socket

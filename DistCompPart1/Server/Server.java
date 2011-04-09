@@ -1,4 +1,8 @@
+//DistComp - Project
+//Alex Sieland
+//Matthew Dale
 package Server;
+
 import java.net.*;
 import java.io.*;
 import java.util.concurrent.Semaphore;
@@ -9,10 +13,12 @@ public class Server implements Runnable{
 	boolean running;
 	PrintWriter printOut;
     private final Semaphore threadResource;
+    private ServerCommand com;
 	
-	public Server(int port) {
+	public Server(int port, ServerCommand com) {
 		super();
 		this.port = port;
+		this.com = com;
 		this.running = false;
         threadResource = new Semaphore(100, true);
 	}
@@ -58,7 +64,7 @@ public class Server implements Runnable{
 				String message = in.readLine();
 				
 				PrintWriter out = new PrintWriter(sock.getOutputStream());
-				out.println(message.toUpperCase());
+				com.command(message, out);
 				out.flush();
 				
 				sock.close();

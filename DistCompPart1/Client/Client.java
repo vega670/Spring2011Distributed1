@@ -1,4 +1,8 @@
+//DistComp - Project
+//Alex Sieland
+//Matthew Dale
 package Client;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -44,14 +48,27 @@ public class Client {
 			Socket sock = new Socket(host, port);
 			
 			PrintWriter out = new PrintWriter(sock.getOutputStream());
-			out.println(message);
+			out.println("ping");
 			out.flush();
 			
 			sock.setSoTimeout(timeout);
 			BufferedReader in = new BufferedReader( new InputStreamReader( sock.getInputStream() ) ) ;
-			message = in.readLine();
+			String ipMessage = in.readLine();
+			String portMessage = in.readLine();
 			
 			sock.close();
+			
+			Socket sockMessage = new Socket(ipMessage, Integer.parseInt(portMessage));
+			
+			PrintWriter outMessage = new PrintWriter(sockMessage.getOutputStream());
+			outMessage.println(message);
+			outMessage.flush();
+			
+			sockMessage.setSoTimeout(timeout);
+			BufferedReader inMessage = new BufferedReader( new InputStreamReader( sockMessage.getInputStream() ) ) ;
+			message = inMessage.readLine();
+			
+			sockMessage.close();
 			
 			totalTime += System.currentTimeMillis() - startTime;
 			

@@ -1,3 +1,6 @@
+//DistComp - Project
+//Alex Sieland
+//Matthew Dale
 package Router;
 
 import java.net.InetAddress;

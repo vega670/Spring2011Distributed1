@@ -1,3 +1,6 @@
+//DistComp - Project
+//Alex Sieland
+//Matthew Dale
 package Router;
 
 //import java.util.Comparator;

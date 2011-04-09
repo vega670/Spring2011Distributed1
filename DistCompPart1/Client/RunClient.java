@@ -1,10 +1,13 @@
+//DistComp - Project
+//Alex Sieland
+//Matthew Dale
 package Client;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
 
-import Server.Server;
+import Server.RunServer;
 
 public class RunClient {
 
@@ -24,7 +27,8 @@ public class RunClient {
 				ip = InetAddress.getByName(args[0]);
 			}
 			
-			new Thread( new Server(17655)).start(); 
+			RunServer.runServer(); 
+			
 			Client client = new Client(ip, port);
 			while(true){
 				System.out.println( client.send( in.readLine() ) );
