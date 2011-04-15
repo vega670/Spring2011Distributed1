@@ -5,6 +5,7 @@ package Router;
 
 import java.net.InetAddress;
 import java.util.Comparator;
+import java.util.Random;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -36,8 +37,14 @@ public class ServerTable {
 	}
 	
 	public ServerLink getServerLink(){
+		int stop = new Random().nextInt(table.size());
+		int ii = 0;
 		for(InetAddress i : table.keySet()){
+			if(stop == ii){
 				return getServerLink(i);
+			}else{
+				ii++;
+			}
 		}
 		return null;
 	}
