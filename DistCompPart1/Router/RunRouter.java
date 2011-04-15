@@ -29,10 +29,19 @@ public class RunRouter {
 			
 			table.addServerTable(17654);  //for what servers are linked under that port
 			
-                        (new Thread(new DiscoveryService())).start();
+            (new Thread(new DiscoveryService(table))).start();
 
 			for(Integer i : table.getPorts()){
 				new Thread( new RouterPort(i, table.getServerTable(i)) ).start();
+			}
+			
+			while(true){
+				try{
+					Thread.sleep(30000);
+					socket.send(out);
+				}catch(Exception e){
+					//This spot left blank intentionally
+				}
 			}
 
 		}catch(Exception e){

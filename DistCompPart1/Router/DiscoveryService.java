@@ -11,8 +11,13 @@ import java.net.MulticastSocket;
 public class DiscoveryService implements Runnable{
     public static final String address = "229.229.1.1";
     public static final int port = 9876;
+    private RouteTable rTable; 
+    
+    public DiscoveryService(RouteTable rTable) {
+		this.rTable = rTable;
+	}
 
-    public void run(){
+	public void run(){
         InetAddress group = null;
         MulticastSocket socket = null;
         try{
@@ -36,8 +41,17 @@ public class DiscoveryService implements Runnable{
             for(int i = 0; ((char)buffer[i]) != '/';i++)
                 inString += (char)buffer[i];
             inSplit = inString.split(" ");
-            // add new server with address inSplit[0] and port Integer.parseInt(inSplit[1])
+            //possibly add sendback with identification on same port to said given ip?
             System.out.println("New server: " + inSplit[0] + ":" + Integer.parseInt(inSplit[1]) + ".");
+            try{
+            	for(Integer i : rTable.getPorts()){
+            		if(InetAddress.getLocalHost().equals(InetAddress.getByName(inSplit[0]))){
+            			rTable.getServerTable(i).addServerLink(new ServerLink(17654, InetAddress.getByName(inSplit[0]) ));  //quickfix on port
+            		}
+            	}
+            }catch(Exception e){
+            	//This spot left blank intentionally
+            }
         }
     }
 }
